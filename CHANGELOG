@@ -1,0 +1,6 @@
+0.1.1 August 27, 2005 Minor fixes
+
+Thanks to Jason Vasquez mugatu at mugfu dot com for noticing that Key#to_s
+called the nonexistent encoded method. 
+
+I also made a few slight changes to the documentation.
