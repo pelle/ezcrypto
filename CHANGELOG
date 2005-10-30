@@ -1,3 +1,7 @@
+0.2 October 30th, 2005 Ruby on Rails integration
+
+As promised I have now included my first version of ActiveCrypto the crypto layer for ActiveRecord and Ruby on Rails.
+
 0.1.1 August 27, 2005 Minor fixes
 
 Thanks to Jason Vasquez mugatu at mugfu dot com for noticing that Key#to_s

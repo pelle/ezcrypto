@@ -22,7 +22,7 @@ Eg.
 
 == License
 
-Action Web Service is released under the MIT license.
+ActiveCrypto and EzCrypto are released under the MIT license.
 
 
 == Support
