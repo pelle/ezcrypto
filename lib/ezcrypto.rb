@@ -3,7 +3,7 @@ require 'digest/sha2'
 require 'digest/sha1'
 require 'base64'
 
-module EzCrypto
+module EzCrypto #:nodoc:
 
 
 =begin rdoc
@@ -195,7 +195,7 @@ You probably should be using the Key class instead.
 Warning! The interface may change.
 
 =end
-  class CipherWrapper
+  class CipherWrapper #:nodoc:
 
 =begin rdoc
   
@@ -262,7 +262,7 @@ You probably should be using Key instead.
 Warning! The interface may change.
 
 =end
-  class Encrypter<EzCrypto::CipherWrapper
+  class Encrypter<EzCrypto::CipherWrapper #:nodoc:
 
 =begin rdoc
   
@@ -286,7 +286,7 @@ You probably should be using Key instead.
 
 Warning! The interface may change.
 =end
-  class Decrypter<EzCrypto::CipherWrapper
+  class Decrypter<EzCrypto::CipherWrapper #:nodoc:
 =begin rdoc
   
 =end

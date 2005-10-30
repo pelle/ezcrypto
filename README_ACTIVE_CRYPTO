@@ -69,7 +69,42 @@ You could also do ordinary rails like stuf such as:
 
 Decryption is done transparently.
 
+When doing this within a rails application, active_crypto automatically maintains a list of keys for each user session. Besides the 2 steps below you don't need to do anything special within your controller.
+
+1. When a user logs on with a password enter his password like this:
+
+	@user.enter_password @params['password']
+
+2. When a user logs off call the following
+
+	clear_session_keys
+	
+== Usage as a Rails plugin
+
+Just unpack it into your $MY_RAILS_PROJECTS/vendor/plugins folder to use it as a self contained plugin. Otherwise you can install it as a gem using:
+
+	$ gem install ezcrypto
+
+Then make sure to require "active_crypto.rb" at the end of your environment.rb file.
+
 == Database Schema issues
 
 ActiveCrypto doesn't really care about the schema, but that said you do need a schema that will accept and not mangle it's output. On MySQL I normally use TINYBLOB instead of VARCHAR and BLOB instead of TEXT.
 
+== License
+
+EzCrypto and ActionCrypto is released under the MIT license.
+
+
+== Support
+
+To contact the author, send mail to pelleb@gmail.com
+
+Also see my blogs at:
+http://stakeventures.com and
+http://neubia.com
+
+This project was based on code used in my project StakeItOut, where you can securely share web services with your partners.
+https://stakeitout.com
+
+(C) 2005 Pelle Braendgaard

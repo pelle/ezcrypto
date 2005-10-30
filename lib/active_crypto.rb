@@ -1,9 +1,15 @@
 require "ezCrypto"
 module ActiveRecord # :nodoc:
   module Crypto  #:nodoc:
+    
+    def self.append_features(base)  #:nodoc:
+      super
+      base.extend(ClassMethods)
+    end
+    
 =begin rdoc
 
-Usage is very simple 
+Usage is very simple. You will generally only need the two class methods listed here in your ActiveRecord class model.
 
 == License
 
@@ -24,12 +30,6 @@ https://stakeitout.com
 (C) 2005 Pelle Braendgaard
 
 =end
-    
-    def self.append_features(base)  #:nodoc:
-      super
-      base.extend(ClassMethods)
-    end
-    
     module ClassMethods
       @@session_keys={}
 
@@ -78,8 +78,16 @@ Creates support in this class for holding a key. Adds the following methods:
 * enter_password(password,salt="onetwothree")
 * set_session_key(key)
 * session_key
+
+Use it as follows:
+
+  class User < ActiveRecord::Base
+  	has_many :documents
+  	keyholder
+  end
+
 =end        
-      def keyholder
+      def keyholder()
       	include ActiveRecord::Crypto::KeyHolder          
       end
 
@@ -87,7 +95,7 @@ Creates support in this class for holding a key. Adds the following methods:
 Clears the session_key array. Generally this is handled automatically as a filter in ActionController. Only use these if you need to
 do something out of the ordinary.
 =end
-      def clear_session_keys #:nodoc:
+      def clear_session_keys() #:nodoc:
         @@session_keys.clear
       end 
       
@@ -99,7 +107,7 @@ do something out of the ordinary, as it is handled
         @@session_keys=keys
       end
       
-      def session_keys #:nodoc
+      def session_keys() #:nodoc:
         @@session_keys
       end
     end
@@ -198,14 +206,24 @@ clears any existing session_keys.
 Leaving the action it stores any session_keys in the corresponding session variable.
 
 These filters are automatically enabled. You do not have to do anything.
+  
+To manually clear the session keys call clear_session_keys. This should be done for example as part of a session log off action.
 =end  
-  module CryptoSupport #:nodoc:
+  module CryptoSupport 
     
     def self.append_features(base) #:nodoc:
       super
       base.send :prepend_before_filter, :load_session_keys
       base.send :prepend_after_filter, :save_session_keys      
     end
+
+=begin rdoc
+Clears the session keys. Call this when a user logs of.
+=end
+    def clear_session_keys
+      ActiveRecord::Base.clear_session_keys
+    end
+    
     
     private
     def load_session_keys

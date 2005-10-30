@@ -113,7 +113,7 @@ A salt is just a piece of data we hash in with the password to create the key. I
 
 == License
 
-Action Web Service is released under the MIT license.
+EzCrypto and ActionCrypto is released under the MIT license.
 
 
 == Support
