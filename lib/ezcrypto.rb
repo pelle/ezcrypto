@@ -44,7 +44,7 @@ https://stakeitout.com
     attr_reader :raw,:algorithm
     
 =begin rdoc
-Initialize the key with raw binary key data. This needs to be at least
+Initialize the key with raw unencoded binary key data. This needs to be at least
 16 bytes long for the default aes-128 algorithm.
 =end
     def initialize(raw,options = {})
@@ -146,10 +146,10 @@ returns the Base64 encoded key.
     end
     
 =begin rdoc
-returns the Base64 encoded key. Synonymo for encode.  
+returns the Base64 encoded key. Synonym for encode.  
 =end
     def to_s
-      encoded
+      encode
     end
     
 =begin rdoc
