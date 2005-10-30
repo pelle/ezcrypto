@@ -129,24 +129,8 @@ Returns the session_key
       def session_key
         Base.session_keys[session_key_id]
       end
-    
+      
       private
-      
-      def _decrypt(data)
-        if session_key.nil?
-          raise MissingKeyError
-        else
-          session_key.decrypt(data)
-        end
-      end
-      
-      def _encrypt(data)
-        if session_key.nil?
-          raise MissingKeyError
-        else 
-          session_key.encrypt(data)
-        end
-      end
       
       def session_key_id
           "#{self.class.to_s}:#{id}"
@@ -176,7 +160,26 @@ Returns the session_key
    		    orig_write_attribute(name,value)
   	    end
       end
-    end       
+    end
+    
+    private
+    
+    def _decrypt(data)
+      if session_key.nil?
+        raise MissingKeyError
+      else
+        session_key.decrypt(data)
+      end
+    end
+    
+    def _encrypt(data)
+      if session_key.nil?
+        raise MissingKeyError
+      else 
+        session_key.encrypt(data)
+      end
+    end
+               
   end
   
   class Base # :nodoc:
