@@ -1,3 +1,7 @@
+0.2.1 November 2nd, 2005 New method in KeyHolder
+
+Added set_encoded_key(enc) to KeyHolder for setting a key with the Base64 encoded keyvalue.
+
 0.2 October 30th, 2005 Ruby on Rails integration
 
 As promised I have now included my first version of ActiveCrypto the crypto layer for ActiveRecord and Ruby on Rails.

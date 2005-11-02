@@ -8,7 +8,7 @@ require 'rake/contrib/rubyforgepublisher'
 
 PKG_BUILD     = ENV['PKG_BUILD'] ? '.' + ENV['PKG_BUILD'] : ''
 PKG_NAME      = 'ezcrypto'
-PKG_VERSION   = '0.2' + PKG_BUILD
+PKG_VERSION   = '0.2.1' + PKG_BUILD
 PKG_FILE_NAME = "#{PKG_NAME}-#{PKG_VERSION}"
 
 RELEASE_NAME  = "REL #{PKG_VERSION}"
@@ -31,7 +31,7 @@ Rake::TestTask.new { |t|
 Rake::RDocTask.new { |rdoc|
   rdoc.rdoc_dir = 'doc'
   rdoc.title    = "EzCrypto - Simplified Crypto Library"
-  rdoc.options << '--line-numbers --inline-source --main README'
+  rdoc.options << '--line-numbers --inline-source --main README --template=jamis'
   rdoc.template = "#{ENV['template']}.rb" if ENV['template']
   rdoc.rdoc_files.include('README')
   rdoc.rdoc_files.include('README_ACTIVE_CRYPTO')

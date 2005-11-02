@@ -9,6 +9,16 @@ EzCrypto is an easy to use wrapper around the poorly documented OpenSSL ruby lib
 * Single class object oriented access to most commonly used features
 * Ruby like
 
+== Installation
+
+Download it from here:
+
+http://rubyforge.org/frs/?group_id=755&release_id=3321
+
+or install it via Ruby Gems:
+
+	gem install ezruby
+
 == Simple examples
 
 ==== To encrypt:

@@ -7,6 +7,17 @@ ActiveCrypto is based on EzCrypto and provides application oriented crypto suppo
 * Transparent encryption/decryption
 * Ruby on Rails like domain language
 
+== Installation
+
+Download it from here:
+
+http://rubyforge.org/frs/?group_id=755&release_id=3321
+
+or install it via Ruby Gems:
+
+	gem install ezruby
+
+
 == Simple examples
 
 ==== A simple encrypted class

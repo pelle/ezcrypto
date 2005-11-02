@@ -125,6 +125,12 @@ Creates a key for object based on given password and an optional salt.
       end
 
 =begin rdoc
+Decodes the Base64 encoded key and uses it as it's session key
+=end
+      def set_encoded_key(enc)
+        set_session_key(EzCrypto::Key.decode(enc))
+      end
+=begin rdoc
 Sets a session key for the object. This should be a EzCrypto::Key instance.
 =end
       def set_session_key(key)    
