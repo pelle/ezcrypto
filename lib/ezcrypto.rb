@@ -142,7 +142,7 @@ Given an algorithm this calculates the keysize. This is used by both the generat
 returns the Base64 encoded key.
 =end
     def encode
-      Base64.encode64 @raw
+      Base64.encode64(@raw).chop
     end
     
 =begin rdoc

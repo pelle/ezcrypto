@@ -1,0 +1,121 @@
+$:.unshift(File.dirname(__FILE__) + "/../lib/")
+require File.join(File.dirname(__FILE__), 'test_helper')
+require 'test/unit'
+require 'active_crypto'
+
+class User < ActiveRecord::Base
+	has_many :secrets
+	has_many :groups
+	keyholder
+end
+
+class Secret < ActiveRecord::Base
+	encrypt :name,:email, :key=>:user
+	belongs_to :user
+	has_many :children
+end
+
+class Child < ActiveRecord::Base
+	encrypt :email, :key=>:secret
+	belongs_to :secret
+end
+
+class Group < ActiveRecord::Base
+	belongs_to :user
+	has_many :group_secrets
+	
+	encrypt :name,:group_key, :key=>:user	
+end
+
+class GroupSecret < ActiveRecord::Base
+	belongs_to :group
+	
+	encrypt :title,:body, :key=>:group
+	
+end
+
+class ActiveCryptoTest < Test::Unit::TestCase
+
+  def setup
+  end
+  
+  def test_key_holder
+    user=User.new
+    user.name="bob"
+    user.save
+  	assert user.kind_of?(ActiveRecord::Crypto::KeyHolder)
+  	assert user.kind_of?(ActiveRecord::Base)
+  	assert user.kind_of?(User)
+    assert_nil user.session_key
+  	user.enter_password "shhcccc"
+  	assert_not_nil user.session_key
+  	assert_not_nil user.session_key.encrypt("test")    
+  end
+  
+  def test_encrypted_child
+    user=User.new
+    user.save
+    assert_nil user.session_key
+  	user.enter_password "shhcccc"
+  	assert_not_nil user.session_key
+  	assert user.kind_of?(ActiveRecord::Crypto::KeyHolder)
+  	assert user.kind_of?(ActiveRecord::Base)
+  	assert user.kind_of?(User)
+  	
+  	jill=user.secrets.create
+  	
+  	assert_not_nil jill
+  	assert jill.kind_of?(ActiveRecord::Crypto::AssociationKeyHolder)
+  	assert jill.kind_of?(ActiveRecord::Crypto::KeyHolder)
+  	assert jill.kind_of?(ActiveRecord::Crypto::Encrypted)
+  	assert jill.kind_of?(ActiveRecord::Base)
+  	assert jill.kind_of?(Secret)
+  	
+  	assert jill.respond_to?(:session_key)
+  	
+    assert_not_nil jill.user
+    assert_not_nil jill.user.session_key
+  	
+  	
+    assert_not_nil jill.session_key
+    assert_equal user.session_key,jill.session_key
+
+    jill.name="jill"
+    jill.save
+
+
+    assert_equal "jill",jill.name
+    
+    jill=user.secrets.first
+    assert_not_nil jill.session_key
+    assert_equal user.session_key,jill.session_key
+    assert_equal "jill",jill.name
+    
+    child=jill.children.create
+    child.email="pelle@neubia.com"
+    child.save
+
+    assert_not_nil child.secret
+    assert_not_nil child.secret.session_key
+
+
+    assert_not_nil child.session_key
+    assert_equal user.session_key,child.session_key
+
+    assert_equal "pelle@neubia.com",child.email
+
+    child=jill.children.first
+
+    assert_not_nil child.secret
+    assert_not_nil child.secret.session_key
+
+
+    assert_not_nil child.session_key
+    assert_equal user.session_key,child.session_key
+
+    assert_equal "pelle@neubia.com",child.email
+
+  end
+
+end
+

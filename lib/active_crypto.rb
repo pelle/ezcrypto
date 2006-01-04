@@ -1,4 +1,4 @@
-require "ezCrypto"
+require "ezcrypto.rb"
 module ActiveRecord # :nodoc:
   module Crypto  #:nodoc:
     
@@ -49,18 +49,23 @@ Include optional option :key, to specify an external KeyHolder, which holds the 
 	
 =end
       def encrypt(*attributes)        
-        	include ActiveRecord::Crypto::Encrypted
-        	alias_method :orig_write_attribute, :write_attribute
-        	alias_method :write_attribute,:write_encrypted_attribute
-          options=attributes.last.is_a?(Hash) ? attributes.pop : {}
-          if options and options[:key]
-    				module_eval <<-"end;"				 
-    					def session_key
-    						(send :#{options[:key]} ).send :session_key
-    					end	 
-    				end;
-                
-          end
+      	include ActiveRecord::Crypto::Encrypted
+      	alias_method :orig_write_attribute, :write_attribute
+      	alias_method :write_attribute,:write_encrypted_attribute
+        options=attributes.last.is_a?(Hash) ? attributes.pop : {}
+        if options and options[:key]
+          include ActiveRecord::Crypto::AssociationKeyHolder
+          
+  				module_eval <<-"end;"				 
+  					def session_key
+  						(send :#{options[:key]} ).send :session_key
+  					end	 
+  					@@external_key=true
+  				end;
+  			else
+  			  include ActiveRecord::Crypto::KeyHolder
+        end
+
   			self.encrypted_attributes=attributes
   			for enc in attributes
             
@@ -88,7 +93,7 @@ Use it as follows:
 
 =end        
       def keyholder()
-      	include ActiveRecord::Crypto::KeyHolder          
+      	include ActiveRecord::Crypto::AssociationKeyHolder          
       end
 
 =begin rdoc
@@ -121,7 +126,7 @@ This module handles all standard key management features.
 Creates a key for object based on given password and an optional salt.
 =end
       def enter_password(password,salt="onetwothree")
-        set_session_key(EzCrypto::Key.with_password password, salt)
+        set_session_key(EzCrypto::Key.with_password(password, salt))
       end
 
 =begin rdoc
@@ -134,6 +139,24 @@ Decodes the Base64 encoded key and uses it as it's session key
 Sets a session key for the object. This should be a EzCrypto::Key instance.
 =end
       def set_session_key(key)    
+        @session_key=key
+      end      
+
+=begin rdoc
+Returns the session_key
+=end
+      def session_key
+        @session_key
+      end
+      
+    end
+
+    module AssociationKeyHolder   
+      include KeyHolder
+=begin rdoc
+Sets a session key for the object. This should be a EzCrypto::Key instance.
+=end
+      def set_session_key(key)    
         Base.session_keys[session_key_id]=key
       end      
 
@@ -141,18 +164,21 @@ Sets a session key for the object. This should be a EzCrypto::Key instance.
 Returns the session_key
 =end
       def session_key
-        Base.session_keys[session_key_id]
+        if session_key_id
+          Base.session_keys[session_key_id]
+        else
+          nil
+        end
       end
-      
+
       private
-      
+
       def session_key_id
           "#{self.class.to_s}:#{id}"
       end      
     end
 
     module Encrypted    #:nodoc:
-      include ActiveRecord::Crypto::KeyHolder
       def self.append_features(base)  #:nodoc:
         super
 				base.module_eval <<-"end;"				 
@@ -182,7 +208,11 @@ Returns the session_key
       if session_key.nil?
         raise MissingKeyError
       else
-        session_key.decrypt(data)
+        if data
+          session_key.decrypt(data)
+        else
+          nil
+        end
       end
     end
     
@@ -190,7 +220,11 @@ Returns the session_key
       if session_key.nil?
         raise MissingKeyError
       else 
-        session_key.encrypt(data)
+        if data
+          session_key.encrypt(data)
+        else
+          nil
+        end
       end
     end
                
