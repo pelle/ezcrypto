@@ -20,6 +20,64 @@ class Child < ActiveRecord::Base
 	belongs_to :secret
 end
 
+class Asset<ActiveRecord::Base
+  encrypt :title
+  has_many :caps,:dependent=>:destroy
+  
+  def self.create(title,email)
+    asset=Asset.new
+    asset.set_session_key(EzCrypto::Key.generate)
+    asset.title=title
+    if asset.save
+      asset.share(email)
+    else
+      nil
+    end
+  end
+
+  def share(email=nil)
+    Cap.create_for_asset(self,email)
+  end
+  
+end
+
+class Cap < ActiveRecord::Base
+  belongs_to :asset
+  encrypt :shared_key
+  
+  def self.find_by_key(cap_key)
+    cap_key.chop
+    hash=Digest::SHA1.hexdigest(cap_key)
+    if (cap_key.length>=20) # Sanity check
+      cap=self.find_by_key_hash(hash)
+      if cap
+        cap.set_encoded_key(cap_key)
+        cap.asset.set_encoded_key(cap.shared_key)
+        cap
+      end
+    else
+      nil
+    end
+  end
+  
+  def self.create_for_asset(asset,email=nil)
+    cap=Cap.new
+    cap.email=email if email
+    cap.asset=asset
+    if cap.save
+      cap.set_session_key(EzCrypto::Key.generate)
+      cap_key=cap.session_key.encode
+      cap.key_hash=Digest::SHA1.hexdigest(cap_key)
+      cap.shared_key=asset.session_key.encode
+      cap.save
+      cap_key
+    else
+      nil
+    end
+  end
+  
+end
+
 class Group < ActiveRecord::Base
 	belongs_to :user
 	has_many :group_secrets
@@ -117,5 +175,23 @@ class ActiveCryptoTest < Test::Unit::TestCase
 
   end
 
+  def test_caps
+    key=Asset.create("title","pelle@neubia.com")
+    assert_not_nil key
+    cap=Cap.find_by_key key
+    assert_not_nil cap
+    assert_not_nil cap.asset
+    assert_equal "title",cap.asset.title
+    assert_equal "pelle@neubia.com",cap.email
+    
+    bob_key=cap.asset.share("bob@bob.com")
+    bob_cap=Cap.find_by_key bob_key
+    
+    assert_not_equal key,bob_key
+    assert_not_nil bob_cap
+    assert_not_nil bob_cap.asset
+    assert_equal "title",bob_cap.asset.title
+    assert_equal "bob@bob.com",bob_cap.email
+  end
 end
 
