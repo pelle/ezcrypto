@@ -1,3 +1,7 @@
+0.2.2 January 4th, 2006 Bug fixes and unit tests for active_crypto
+
+There were some serious problems with ActiveCrypto's support for having keys in associated classes. I also added unit tests to active_crypto. The support code was brutaly stolen from Rick Olson's acts_as_paranoid library. Unfortunately I disabled the schema stuff for now, but will add it in the next release, which hopefully is soon.
+
 0.2.1 November 2nd, 2005 New method in KeyHolder
 
 Added set_encoded_key(enc) to KeyHolder for setting a key with the Base64 encoded keyvalue.

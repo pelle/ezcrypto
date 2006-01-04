@@ -11,7 +11,7 @@ ActiveCrypto is based on EzCrypto and provides application oriented crypto suppo
 
 Download it from here:
 
-http://rubyforge.org/frs/?group_id=755&release_id=3321
+http://rubyforge.org/frs/?group_id=755
 
 or install it via Ruby Gems:
 
@@ -115,7 +115,8 @@ Also see my blogs at:
 http://stakeventures.com and
 http://neubia.com
 
-This project was based on code used in my project StakeItOut, where you can securely share web services with your partners.
+This project was based on code used in my projects WideWord where you can securely share documents and StakeItOut, where you can securely share web services with your partners.
+https://wideword.net
 https://stakeitout.com
 
 (C) 2005 Pelle Braendgaard

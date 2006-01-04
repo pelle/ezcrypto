@@ -8,7 +8,7 @@ require 'rake/contrib/rubyforgepublisher'
 
 PKG_BUILD     = ENV['PKG_BUILD'] ? '.' + ENV['PKG_BUILD'] : ''
 PKG_NAME      = 'ezcrypto'
-PKG_VERSION   = '0.2.1' + PKG_BUILD
+PKG_VERSION   = '0.2.2' + PKG_BUILD
 PKG_FILE_NAME = "#{PKG_NAME}-#{PKG_VERSION}"
 
 RELEASE_NAME  = "REL #{PKG_VERSION}"
@@ -36,9 +36,7 @@ Rake::RDocTask.new { |rdoc|
   rdoc.rdoc_files.include('README')
   rdoc.rdoc_files.include('README_ACTIVE_CRYPTO')
   rdoc.rdoc_files.include('CHANGELOG')
-  rdoc.rdoc_files.include('lib/ezcrypto.rb')
-  rdoc.rdoc_files.include('lib/active_crypto.rb')
-#  rdoc.rdoc_files.include('lib/ezcrypto/*.rb')
+  rdoc.rdoc_files.include('lib/*.rb')
 }
 
 
@@ -60,9 +58,9 @@ spec = Gem::Specification.new do |s|
   s.requirements << 'none'
   s.require_path = 'lib'
 
-  s.files = [ "rakefile", "README", "README_ACTIVE_CRYPTO", "MIT-LICENSE","CHANGELOG" ]
-  s.files = s.files + Dir.glob( "lib/**/*" ).delete_if { |item| item.include?( "\.svn" ) }
-  s.files = s.files + Dir.glob( "test/**/*" ).delete_if { |item| item.include?( "\.svn" ) }
+  s.files = [ "rakefile", "README", "README_ACTIVE_CRYPTO", "MIT-LICENSE","CHANGELOG","init.rb" ]
+  s.files = s.files + Dir.glob( "lib/**/*" ).delete_if { |item| item.include?( "CVS" )||item.include?("\.DS_Store")||item.include?("/\._")  }
+  s.files = s.files + Dir.glob( "test/**/*" ).delete_if { |item| item.include?( "CVS" )||item.include?("\.DS_Store")||item.include?("/\._")  }
 end
   
 Rake::GemPackageTask.new(spec) do |p|
