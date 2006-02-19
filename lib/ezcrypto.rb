@@ -155,10 +155,14 @@ returns the Base64 encoded key. Synonym for encode.
 =begin rdoc
 Encrypts the data and returns it in encrypted binary form.
 =end
-    def encrypt(data)
+  def encrypt(data)
+    if data==nil || data==""
+      nil
+    else  
       @cipher=EzCrypto::Encrypter.new(self,"",@algorithm)
       @cipher.encrypt(data)
     end
+  end
 
 =begin rdoc
 Encrypts the data and returns it in encrypted Base64 encoded form.
