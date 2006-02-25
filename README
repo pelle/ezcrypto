@@ -134,7 +134,19 @@ Also see my blogs at:
 http://stakeventures.com and
 http://neubia.com
 
-This project was based on code used in my project StakeItOut, where you can securely share web services with your partners.
+This project was based on code used in my projects StakeItOut, WideWord and WideBlog.
+
+StakeItOut lets you securely share web services with your partners.
+
 https://stakeitout.com
+
+WideWord lets you collaboratively write and share documents that remain 100% encrypted on the server. Only you have the keys:
+
+http://wideword.net
+
+WideBlog is a secure private blogging system designed for private project blogs. It uses the same encryption technology as WideWord and is very easy to use:
+
+http://wideblog.net
+
 
 (C) 2005 Pelle Braendgaard
