@@ -1,3 +1,31 @@
+0.3   February 25th, 2006 new encrypted file support by Dirk (dirk.barnikel@gmx.de) Thanks Dirk.
+
+* Added test case for the file-related stuff. file-stuff 
+  seems to work fine
+
+* Replaced hard coded IO buffersize (512) with class attribute
+  Key#block_size and default value.
+
+* Removed  experimental :encoding and :metadata stuff. 
+  (sorry, forgotten them before first submit).
+
+* Modification to create {De,En}crypters only via the factory methods
+  Key#{de,en}crypter.
+
+* Added Key#{de,en}crypt_file methods that take a file and
+  de- or encrypts it. 
+  - The methods are implemented to call the cipher with small
+    chunks of data (512 bytes) to keep memory usage low.    
+  - By default, the original file is first overwritten and then removed. 
+  - This overwrite is not really safe but should make it harder to restore
+    the data of the removed file from the filesystem.
+
+* Added Key#{store,load} methods that read and write Key
+  data to/from files.
+
+* Added Key#safe_{create,delete,read} methods to encapsulate
+  the handling of files inside Ezcrypto.
+
 0.2.2 January 4th, 2006 Bug fixes and unit tests for active_crypto
 
 There were some serious problems with ActiveCrypto's support for having keys in associated classes. I also added unit tests to active_crypto. The support code was brutaly stolen from Rick Olson's acts_as_paranoid library. Unfortunately I disabled the schema stuff for now, but will add it in the next release, which hopefully is soon.
