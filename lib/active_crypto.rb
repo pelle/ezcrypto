@@ -50,8 +50,11 @@ Include optional option :key, to specify an external KeyHolder, which holds the 
 =end
       def encrypt(*attributes)        
       	include ActiveRecord::Crypto::Encrypted
-      	alias_method :orig_write_attribute, :write_attribute
-      	alias_method :write_attribute,:write_encrypted_attribute
+      	before_save :encrypt_attributes
+      	after_find :decrypt_attributes
+      	
+      	#alias_method :orig_write_attribute, :write_attribute
+      	#alias_method :write_attribute,:write_encrypted_attribute
         options=attributes.last.is_a?(Hash) ? attributes.pop : {}
         if options and options[:key]
           include ActiveRecord::Crypto::AssociationKeyHolder
@@ -67,14 +70,15 @@ Include optional option :key, to specify an external KeyHolder, which holds the 
         end
 
   			self.encrypted_attributes=attributes
-  			for enc in attributes
+  			
+#  			for enc in attributes
             
-  				module_eval <<-"end;"
-  					def #{enc.to_s}
-  						_decrypt(read_attribute("#{enc.to_s}"))
-  					end	 
-  				end;
-			  end
+#  				module_eval <<-"end;"
+#  					def #{enc.to_s}
+#  						_decrypt(read_attribute("#{enc.to_s}"))
+#  					end	 
+#  				end;
+#			  end
       end   
 		
 =begin rdoc
@@ -115,6 +119,7 @@ do something out of the ordinary, as it is handled
       def session_keys() #:nodoc:
         @@session_keys
       end
+      
     end
 
 =begin rdoc
@@ -187,7 +192,7 @@ Returns the session_key
             @@encrypted_attributes
           end
           
-          def #{base.to_s}.encrypted_attributes=(attrs)
+          def self.encrypted_attributes=(attrs)
             @@encrypted_attributes=attrs
           end
         end;
@@ -200,34 +205,46 @@ Returns the session_key
    		    orig_write_attribute(name,value)
   	    end
       end
-    end
     
-    private
+      private
     
-    def _decrypt(data)
-      if session_key.nil?
-        raise MissingKeyError
-      else
-        if data
-          session_key.decrypt(data)
-        else
-          nil
+      def encrypt_attributes
+        self.encrypted_attributes.each do |key,value|
+          write_attribute(key,_encrypt(value)) if value
         end
       end
-    end
     
-    def _encrypt(data)
-      if session_key.nil?
-        raise MissingKeyError
-      else 
-        if data
-          session_key.encrypt(data)
+      def decrypt_attributes
+        self.encrypted_attributes.each do |key,value|
+          write_attribute(key,_decrypt(value)) if value
+        end      
+      end
+    
+      def _decrypt(data)
+        if session_key.nil?
+          raise MissingKeyError
         else
-          nil
+          if data
+            session_key.decrypt(data)
+          else
+            nil
+          end
         end
       end
-    end
+    
+      def _encrypt(data)
+        if session_key.nil?
+          raise MissingKeyError
+        else 
+          if data
+            session_key.encrypt(data)
+          else
+            nil
+          end
+        end
+      end
                
+    end
   end
   
   class Base # :nodoc:

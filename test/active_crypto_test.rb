@@ -93,7 +93,7 @@ class GroupSecret < ActiveRecord::Base
 end
 
 class ActiveCryptoTest < Test::Unit::TestCase
-
+ 
   def setup
   end
   
@@ -182,7 +182,9 @@ class ActiveCryptoTest < Test::Unit::TestCase
     assert_not_nil cap
     assert_not_nil cap.asset
     assert_equal "title",cap.asset.title
+    assert_equal "title",cap.asset["title"]
     assert_equal "pelle@neubia.com",cap.email
+    assert_equal "pelle@neubia.com",cap["email"]
     
     bob_key=cap.asset.share("bob@bob.com")
     bob_cap=Cap.find_by_key bob_key

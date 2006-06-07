@@ -211,7 +211,22 @@ Decrypts a Base64 formatted string
     def decrypt64(data)
       decrypt(Base64.decode64(data))
     end
-
+    
+=begin rdoc
+Allows keys to be marshalled
+=end
+    def marshal_dump
+       "#{self.algorithm}$$$#{self.encode}"
+    end
+    
+=begin rdoc
+Allows keys to be unmarshalled
+=end
+    def marshal_load(s) 
+       a, r = s.split '$$$'
+       @algorithm = a
+       @raw = Base64.decode64(r)
+    end
 
 =begin rdoc
 Create a file with minimal permissions, and yield
