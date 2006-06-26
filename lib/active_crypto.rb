@@ -1,6 +1,5 @@
 require "ezcrypto.rb"
-module ActiveRecord # :nodoc:
-  module Crypto  #:nodoc:
+module ActiveCrypto # :nodoc:
     
     def self.append_features(base)  #:nodoc:
       super
@@ -49,36 +48,20 @@ Include optional option :key, to specify an external KeyHolder, which holds the 
 	
 =end
       def encrypt(*attributes)        
-      	include ActiveRecord::Crypto::Encrypted
+      	include ActiveCrypto::Encrypted
       	before_save :encrypt_attributes
-      	after_find :decrypt_attributes
-      	
-      	#alias_method :orig_write_attribute, :write_attribute
-      	#alias_method :write_attribute,:write_encrypted_attribute
+      	after_save :decrypt_attributes
         options=attributes.last.is_a?(Hash) ? attributes.pop : {}
+        keyholder
         if options and options[:key]
-          include ActiveRecord::Crypto::AssociationKeyHolder
-          
   				module_eval <<-"end;"				 
   					def session_key
   						(send :#{options[:key]} ).send :session_key
   					end	 
   					@@external_key=true
   				end;
-  			else
-  			  include ActiveRecord::Crypto::KeyHolder
         end
-
   			self.encrypted_attributes=attributes
-  			
-#  			for enc in attributes
-            
-#  				module_eval <<-"end;"
-#  					def #{enc.to_s}
-#  						_decrypt(read_attribute("#{enc.to_s}"))
-#  					end	 
-#  				end;
-#			  end
       end   
 		
 =begin rdoc
@@ -97,7 +80,8 @@ Use it as follows:
 
 =end        
       def keyholder()
-      	include ActiveRecord::Crypto::AssociationKeyHolder          
+      	include ActiveCrypto::AssociationKeyHolder   
+      	after_create :save_session_key       
       end
 
 =begin rdoc
@@ -157,68 +141,81 @@ Returns the session_key
     end
 
     module AssociationKeyHolder   
-      include KeyHolder
+      include ActiveCrypto::KeyHolder
+      
+      
+      def save_session_key
+        ActiveRecord::Base.session_keys[session_key_id]=@session_key if @session_key
+      end
 =begin rdoc
 Sets a session key for the object. This should be a EzCrypto::Key instance.
 =end
       def set_session_key(key)    
-        Base.session_keys[session_key_id]=key
+        if self.new_record?
+          @session_key=key
+        else
+          ActiveRecord::Base.session_keys[session_key_id]=key
+        end
       end      
 
 =begin rdoc
 Returns the session_key
 =end
       def session_key
-        if session_key_id
-          Base.session_keys[session_key_id]
+        if self.new_record?
+          @session_key
         else
-          nil
+          ActiveRecord::Base.session_keys[session_key_id]
         end
       end
-
-      private
+        
+      
 
       def session_key_id
-          "#{self.class.to_s}:#{id}"
+        "#{self.class.to_s}:#{id}"
       end      
+      
     end
 
     module Encrypted    #:nodoc:
       def self.append_features(base)  #:nodoc:
         super
-				base.module_eval <<-"end;"				 
-         @@encrypted_attributes=[]
-          def encrypted_attributes
-            @@encrypted_attributes
-          end
-          
-          def self.encrypted_attributes=(attrs)
-            @@encrypted_attributes=attrs
-          end
-        end;
+        base.extend ClassAccessors
       end
+      
+      module ClassAccessors
+        def encrypted_attributes
+          @encrypted_attributes||=[]
+        end
 
-      def write_encrypted_attribute(name,value)
-        if encrypted_attributes.include?(name.to_sym)
-            orig_write_attribute(name,_encrypt(value))
-        else
-   		    orig_write_attribute(name,value)
-  	    end
+        def encrypted_attributes=(attrs)
+          @encrypted_attributes=attrs
+        end
+        
       end
     
-      private
-    
+      protected
+
       def encrypt_attributes
-        self.encrypted_attributes.each do |key,value|
+        self.class.encrypted_attributes.each do |key|
+          value=read_attribute(key)
           write_attribute(key,_encrypt(value)) if value
         end
       end
     
       def decrypt_attributes
-        self.encrypted_attributes.each do |key,value|
+        self.class.encrypted_attributes.each do |key|
+          value=read_attribute(key)
           write_attribute(key,_decrypt(value)) if value
         end      
       end
+      
+      
+      def after_find
+        decrypt_attributes
+      end
+      
+      private
     
       def _decrypt(data)
         if session_key.nil?
@@ -245,12 +242,7 @@ Returns the session_key
       end
                
     end
-  end
   
-  class Base # :nodoc:
-    include ActiveRecord::Crypto
-  end
-end
 
 module ActionController # :nodoc:
 =begin rdoc
@@ -265,9 +257,7 @@ Leaving the action it stores any session_keys in the corresponding session varia
 These filters are automatically enabled. You do not have to do anything.
   
 To manually clear the session keys call clear_session_keys. This should be done for example as part of a session log off action.
-=end  
-  module CryptoSupport 
-    
+=end      
     def self.append_features(base) #:nodoc:
       super
       base.send :prepend_before_filter, :load_session_keys
@@ -284,8 +274,8 @@ Clears the session keys. Call this when a user logs of.
     
     private
     def load_session_keys
-      if @session['session_keys']
-        ActiveRecord::Base.session_keys=@session['session_keys']
+      if session['session_keys']
+        ActiveRecord::Base.session_keys=session['session_keys']
       else
         ActiveRecord::Base.clear_session_keys
       end
@@ -293,19 +283,17 @@ Clears the session keys. Call this when a user logs of.
 
     def save_session_keys
       if ActiveRecord::Base.session_keys.size>0
-        @session['session_keys']=ActiveRecord::Base.session_keys
+        session['session_keys']=ActiveRecord::Base.session_keys
       else
-        @session['session_keys']=nil
+        session['session_keys']=nil
       end
     end
     
-  end
-
-  class Base # :nodoc:
-    include CryptoSupport
-  end
 
 end
 
 class MissingKeyError < RuntimeError
 end 
+end
+ActiveRecord::Base.send :include, ActiveCrypto
+ActionController::Base.send :include, ActiveCrypto::ActionController

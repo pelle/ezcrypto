@@ -161,7 +161,7 @@ the generate and with_password methods. This is not yet 100% complete.
 returns the Base64 encoded key.
 =end
     def encode
-      Base64.encode64 @raw
+      Base64.encode64(@raw).chop
     end
 
 =begin rdoc

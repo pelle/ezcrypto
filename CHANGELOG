@@ -1,3 +1,13 @@
+0.5   June 25th, 2006 Good citizen release
+
+I have cleaned up the ActiveCrypto namespaces. It now does not use ActiveRecord::Crypto, but ActiveCrypto::*, if you have called stuff directly please update your code. 
+
+The reason for this is to really be a good citizen in the world of rails and not unnecessarily pollute the ActiveRecord name space.
+
+I have also created much more thorough unit tests and refactored some things that did not work in version 0.4 that the world thankfully did not see.
+
+0.4   Flawed internal release
+
 0.3   February 25th, 2006 new encrypted file support by Dirk (dirk.barnikel@gmx.de) Thanks Dirk.
 
 * Added test case for the file-related stuff. file-stuff 
