@@ -200,9 +200,11 @@ Decrypts the data passed to it in binary format.
         decrypter("")
         @cipher.gulp(data)
       end
-    rescue
-      puts @algorithm
-      throw $!
+#    rescue
+#      puts @algorithm
+#      puts self.encode
+#      puts data.size
+#      throw $!
     end
 
 =begin rdoc
@@ -474,6 +476,8 @@ Processes the entire data string using update and performs a final on it returni
     def gulp(data)
       update(data)
       final 
+#    rescue
+#      breakpoint
     end  
 
 =begin rdoc

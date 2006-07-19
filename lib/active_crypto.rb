@@ -129,6 +129,7 @@ Sets a session key for the object. This should be a EzCrypto::Key instance.
 =end
       def set_session_key(key)    
         @session_key=key
+        self.decrypt_attributes if self.class.include? Encrypted
       end      
 
 =begin rdoc
@@ -156,6 +157,8 @@ Sets a session key for the object. This should be a EzCrypto::Key instance.
         else
           ActiveRecord::Base.session_keys[session_key_id]=key
         end
+        decrypt_attributes if self.class.include? Encrypted #if respond_to?(:decrypt_attributes)
+        
       end      
 
 =begin rdoc
@@ -197,26 +200,37 @@ Returns the session_key
       protected
 
       def encrypt_attributes
-        self.class.encrypted_attributes.each do |key|
-          value=read_attribute(key)
-          write_attribute(key,_encrypt(value)) if value
+        if !is_encrypted?
+          self.class.encrypted_attributes.each do |key|
+            value=read_attribute(key)
+            write_attribute(key,_encrypt(value)) if value
+          end
+          @is_encrypted=true
         end
+        true
       end
     
       def decrypt_attributes
-        self.class.encrypted_attributes.each do |key|
-          value=read_attribute(key)
-          write_attribute(key,_decrypt(value)) if value
-        end      
+        if is_encrypted?
+          self.class.encrypted_attributes.each do |key|
+            value=read_attribute(key)
+            write_attribute(key,_decrypt(value)) if value
+          end
+          @is_encrypted=false
+        end
+        true
       end
       
-      
       def after_find
-        decrypt_attributes
+        @is_encrypted=true
+        decrypt_attributes unless session_key.nil?
       end
       
       private
-    
+      def is_encrypted?
+        @is_encrypted
+      end
+      
       def _decrypt(data)
         if session_key.nil?
           raise MissingKeyError
