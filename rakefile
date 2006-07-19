@@ -59,8 +59,9 @@ spec = Gem::Specification.new do |s|
   s.require_path = 'lib'
 
   s.files = [ "rakefile", "README", "README_ACTIVE_CRYPTO", "MIT-LICENSE","CHANGELOG","init.rb" ]
-  s.files = s.files + Dir.glob( "lib/**/*" ).delete_if { |item| item.include?( "CVS" )||item.include?("\.DS_Store")||item.include?("/\._")  }
-  s.files = s.files + Dir.glob( "test/**/*" ).delete_if { |item| item.include?( "CVS" )||item.include?("\.DS_Store")||item.include?("/\._")  }
+  ["lib","test"].each do |dir|
+  		s.files = s.files + Dir.glob( "#{dir}/*" )
+  end
 end
   
 Rake::GemPackageTask.new(spec) do |p|
@@ -70,7 +71,7 @@ Rake::GemPackageTask.new(spec) do |p|
 end
 
 
-desc "Publish the API documentation"
+desc "Publish the GEM"
 task :pgem => [:package] do 
   Rake::SshFilePublisher.new("pelleb@rubyforge.org", "/var/www/gems", "pkg", "#{PKG_FILE_NAME}.gem").upload
 end
@@ -81,8 +82,8 @@ task :pdoc => [:rdoc] do
 end
 
 desc "Publish the release files to RubyForge."
-task :release => [:package] do
-  files = ["gem", "tgz", "zip"].map { |ext| "pkg/#{PKG_FILE_NAME}.#{ext}" }
+task :rubyforge_upload => :package do
+  files = %w(gem tgz zip).map { |ext| "pkg/#{PKG_FILE_NAME}.#{ext}" }
 
   if RUBY_FORGE_PROJECT then
     require 'net/http'
@@ -144,7 +145,7 @@ task :release => [:package] do
           {
             "group_id" => group_id,
             "package_id" => package_id,
-            "release_name" => RELEASE_NAME,
+            "release_name" => PKG_FILE_NAME,
             "release_date" => release_date,
             "type_id" => type,
             "processor_id" => "8000", # Any

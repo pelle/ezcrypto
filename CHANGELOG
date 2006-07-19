@@ -1,4 +1,4 @@
-0.5   June 25th, 2006 Good citizen release
+0.5   July 19th, 2006 Good citizen release
 
 I have cleaned up the ActiveCrypto namespaces. It now does not use ActiveRecord::Crypto, but ActiveCrypto::*, if you have called stuff directly please update your code. 
 
