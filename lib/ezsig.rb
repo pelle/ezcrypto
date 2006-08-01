@@ -17,7 +17,7 @@ module EzCrypto
   
     def self.from_file(filename,password=nil)
       file = File.read( filename )
-      decode(file,password=nil)
+      decode(file,password)
     end
   
     def public_key
@@ -85,11 +85,13 @@ module EzCrypto
     end
     
     def subject
-      @cert.subject
+      @subject=EzCrypto::Name.new(@cert.subject) unless @subject
+      @subject
     end
     
     def issuer
-      @cert.issuer
+      @issuer=EzCrypto::Name.new(@cert.subject) unless @issuer
+      @issuer
     end
     
     def serial
@@ -110,6 +112,33 @@ module EzCrypto
     
     def valid?(time=Time.now.utc)
       time.to_i>self.not_before.to_i && time.to_i<self.not_after.to_i
+    end
+    
+    def extensions
+      unless @extensions
+        @extensions={}
+        cert.extensions.each {|e| @extensions[e.oid]=e.value} if cert.extensions
+      end
+      @extensions
+    end
+    
+    
+  end
+  
+  class Name
+    def initialize(name)
+      @name=name
+      @attributes={}
+      name.to_s.split(/\//).each do |field| 
+        key, val = field.split(/=/,2)
+        if key
+          @attributes[key.to_sym]=val
+        end
+      end  
+    end
+    
+    def to_s
+      @name.to_s
     end
     
     def email
@@ -150,21 +179,13 @@ module EzCrypto
     alias_method :cn,:common_name
     
     def [](attr_key)
-      unless @attributes
-        @attributes={}
-        subject.to_s.split(/\//).each do |field| 
-          key, val = field.split(/=/,2)
-          if key
-            @attributes[key.to_sym]=val
-          end
-        end
-      end
       @attributes[attr_key.to_sym]
     end
     
     def method_missing(method)
       self[method]
     end
+    
   end
   
 end

@@ -43,44 +43,83 @@ class EzCryptoTest < Test::Unit::TestCase
     assert_equal "/C=DK/ST=Denmark/L=Copenhagen/O=EzCrypto Test Certificate/OU=testing/CN=EzCrypto Testing/emailAddress=pelleb@gmail.com",cert.subject.to_s
     assert_equal "/C=DK/ST=Denmark/L=Copenhagen/O=EzCrypto Test Certificate/OU=testing/CN=EzCrypto Testing/emailAddress=pelleb@gmail.com",cert.issuer.to_s
     
+    assert_kind_of EzCrypto::Name,cert.issuer
+    assert_kind_of EzCrypto::Name,cert.subject
     assert cert.serial
     assert cert.not_after
     assert cert.not_before
     assert cert.valid?
     
-    assert_equal cert[:emailAddress],"pelleb@gmail.com"
-    assert_equal cert[:C],"DK"
-    assert_equal cert[:ST],"Denmark"
-    assert_equal cert[:L],"Copenhagen"
-    assert_equal cert[:OU],"testing"
-    assert_equal cert[:O],"EzCrypto Test Certificate"
-    assert_equal cert[:CN],"EzCrypto Testing"
+    assert_equal cert.subject[:emailAddress],"pelleb@gmail.com"
+    assert_equal cert.subject[:C],"DK"
+    assert_equal cert.subject[:ST],"Denmark"
+    assert_equal cert.subject[:L],"Copenhagen"
+    assert_equal cert.subject[:OU],"testing"
+    assert_equal cert.subject[:O],"EzCrypto Test Certificate"
+    assert_equal cert.subject[:CN],"EzCrypto Testing"
+
+    assert_equal cert.subject.emailAddress,"pelleb@gmail.com"
+    assert_equal cert.subject.C,"DK"
+    assert_equal cert.subject.ST,"Denmark"
+    assert_equal cert.subject.L,"Copenhagen"
+    assert_equal cert.subject.OU,"testing"
+    assert_equal cert.subject.O,"EzCrypto Test Certificate"
+    assert_equal cert.subject.CN,"EzCrypto Testing"
+
+    assert_equal cert.subject.email,"pelleb@gmail.com"
+    assert_equal cert.subject.c,"DK"
+    assert_equal cert.subject.st,"Denmark"
+    assert_equal cert.subject.l,"Copenhagen"
+    assert_equal cert.subject.ou,"testing"
+    assert_equal cert.subject.o,"EzCrypto Test Certificate"
+    assert_equal cert.subject.cn,"EzCrypto Testing"
+
+    assert_equal cert.subject.country,"DK"
+    assert_equal cert.subject.state,"Denmark"
+    assert_equal cert.subject.locality,"Copenhagen"
+    assert_equal cert.subject.organisational_unit,"testing"
+    assert_equal cert.subject.organisation,"EzCrypto Test Certificate"
+    assert_equal cert.subject.organizational_unit,"testing"
+    assert_equal cert.subject.organization,"EzCrypto Test Certificate"
+    assert_equal cert.subject.name,"EzCrypto Testing"
+    assert_equal cert.subject.common_name,"EzCrypto Testing"
+
+    assert_equal cert.issuer[:emailAddress],"pelleb@gmail.com"
+    assert_equal cert.issuer[:C],"DK"
+    assert_equal cert.issuer[:ST],"Denmark"
+    assert_equal cert.issuer[:L],"Copenhagen"
+    assert_equal cert.issuer[:OU],"testing"
+    assert_equal cert.issuer[:O],"EzCrypto Test Certificate"
+    assert_equal cert.issuer[:CN],"EzCrypto Testing"
+
+    assert_equal cert.issuer.emailAddress,"pelleb@gmail.com"
+    assert_equal cert.issuer.C,"DK"
+    assert_equal cert.issuer.ST,"Denmark"
+    assert_equal cert.issuer.L,"Copenhagen"
+    assert_equal cert.issuer.OU,"testing"
+    assert_equal cert.issuer.O,"EzCrypto Test Certificate"
+    assert_equal cert.issuer.CN,"EzCrypto Testing"
+
+    assert_equal cert.issuer.email,"pelleb@gmail.com"
+    assert_equal cert.issuer.c,"DK"
+    assert_equal cert.issuer.st,"Denmark"
+    assert_equal cert.issuer.l,"Copenhagen"
+    assert_equal cert.issuer.ou,"testing"
+    assert_equal cert.issuer.o,"EzCrypto Test Certificate"
+    assert_equal cert.issuer.cn,"EzCrypto Testing"
+    assert_equal cert.issuer.country,"DK"
+    assert_equal cert.issuer.state,"Denmark"
+    assert_equal cert.issuer.locality,"Copenhagen"
+    assert_equal cert.issuer.organisational_unit,"testing"
+    assert_equal cert.issuer.organisation,"EzCrypto Test Certificate"
+    assert_equal cert.issuer.organizational_unit,"testing"
+    assert_equal cert.issuer.organization,"EzCrypto Test Certificate"
+    assert_equal cert.issuer.name,"EzCrypto Testing"
+    assert_equal cert.issuer.common_name,"EzCrypto Testing"
     
-    assert_equal cert.emailAddress,"pelleb@gmail.com"
-    assert_equal cert.C,"DK"
-    assert_equal cert.ST,"Denmark"
-    assert_equal cert.L,"Copenhagen"
-    assert_equal cert.OU,"testing"
-    assert_equal cert.O,"EzCrypto Test Certificate"
-    assert_equal cert.CN,"EzCrypto Testing"
+    ## Extensions
     
-    assert_equal cert.email,"pelleb@gmail.com"
-    assert_equal cert.c,"DK"
-    assert_equal cert.st,"Denmark"
-    assert_equal cert.l,"Copenhagen"
-    assert_equal cert.ou,"testing"
-    assert_equal cert.o,"EzCrypto Test Certificate"
-    assert_equal cert.cn,"EzCrypto Testing"
-    
-    assert_equal cert.country,"DK"
-    assert_equal cert.state,"Denmark"
-    assert_equal cert.locality,"Copenhagen"
-    assert_equal cert.organisational_unit,"testing"
-    assert_equal cert.organisation,"EzCrypto Test Certificate"
-    assert_equal cert.organizational_unit,"testing"
-    assert_equal cert.organization,"EzCrypto Test Certificate"
-    assert_equal cert.name,"EzCrypto Testing"
-    assert_equal cert.common_name,"EzCrypto Testing"
+    assert cert.extensions
     
   end
   
