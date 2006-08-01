@@ -10,7 +10,7 @@ class EzCryptoTest < Test::Unit::TestCase
   def setup
   end
 
-  def test_generate_key
+  def _test_generate_key #very slow so not run by default
     signer=EzCrypto::Signer.generate
     assert_signer(signer)
   end
@@ -40,6 +40,11 @@ class EzCryptoTest < Test::Unit::TestCase
     assert cert.cert?
     assert_instance_of EzCrypto::Certificate, cert
     assert_equal signer.public_key.to_s, cert.public_key.to_s
+    
+    sig=signer.sign "hello"
+    assert sig
+    assert cert.verify( sig,"hello")
+    
     assert_equal "/C=DK/ST=Denmark/L=Copenhagen/O=EzCrypto Test Certificate/OU=testing/CN=EzCrypto Testing/emailAddress=pelleb@gmail.com",cert.subject.to_s
     assert_equal "/C=DK/ST=Denmark/L=Copenhagen/O=EzCrypto Test Certificate/OU=testing/CN=EzCrypto Testing/emailAddress=pelleb@gmail.com",cert.issuer.to_s
     
@@ -123,6 +128,30 @@ class EzCryptoTest < Test::Unit::TestCase
     
   end
   
+  def test_store
+    trust=EzCrypto::TrustStore.new
+    cert=EzCrypto::Verifier.from_file "testsigner.cert"
+    assert !trust.verify(cert)
+    trust.add cert
+    assert trust.verify(cert)
+    
+    valicert=EzCrypto::Verifier.from_file "valicert_class2_root.crt"
+    assert !trust.verify(valicert)
+    starfield=EzCrypto::Verifier.from_file "sf_issuing.crt"
+    assert !trust.verify(starfield)
+    wideword=EzCrypto::Verifier.from_file "wideword.net.cert"
+    assert !trust.verify(wideword)
+    
+    trust.add valicert
+    assert trust.verify(valicert)
+    assert trust.verify(starfield)
+    assert !trust.verify(wideword)
+    
+    trust.add starfield
+    assert trust.verify(wideword)
+
+  end
+  
   def assert_signer(signer)
     assert signer
     assert signer.public_key
@@ -132,4 +161,5 @@ class EzCryptoTest < Test::Unit::TestCase
     assert signer.verifier
     assert signer.verifier.verify( sig,"hello")
   end
+  
 end

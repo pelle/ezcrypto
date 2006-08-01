@@ -188,4 +188,29 @@ module EzCrypto
     
   end
   
+  class TrustStore
+    def initialize(*paths)
+      @store=OpenSSL::X509::Store.new
+    end
+    
+    def add(obj)
+      if obj.kind_of?(EzCrypto::Certificate)
+        @store.add_cert obj.cert
+      elsif obj.kind_of?(OpenSSL::X509::Cert)
+        @store.add_cert obj
+      else 
+        raise "unsupported object type"
+      end
+    end
+    
+    def verify(cert)
+      if cert.kind_of?(EzCrypto::Certificate)
+        @store.verify cert.cert
+      elsif cert.kind_of?(OpenSSL::X509::Cert)
+        @store.verify cert
+      else 
+        false
+      end
+    end
+  end
 end
