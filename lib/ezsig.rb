@@ -191,6 +191,8 @@ module EzCrypto
   class TrustStore
     def initialize(*paths)
       @store=OpenSSL::X509::Store.new
+#      @store.set_default_path paths.shift if paths.length>0
+      paths.each {|path| @store.add_path path}
     end
     
     def add(obj)

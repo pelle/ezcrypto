@@ -128,7 +128,7 @@ class EzCryptoTest < Test::Unit::TestCase
     
   end
   
-  def test_store
+  def test_in_memory_store
     trust=EzCrypto::TrustStore.new
     cert=EzCrypto::Verifier.from_file "testsigner.cert"
     assert !trust.verify(cert)
@@ -149,7 +149,21 @@ class EzCryptoTest < Test::Unit::TestCase
     
     trust.add starfield
     assert trust.verify(wideword)
-
+  end
+  
+  def test_disk_store
+    trust=EzCrypto::TrustStore.new "store"
+    valicert=EzCrypto::Verifier.from_file "valicert_class2_root.crt"
+    assert trust.verify(valicert)
+    starfield=EzCrypto::Verifier.from_file "sf_issuing.crt"
+    assert trust.verify(starfield)
+    wideword=EzCrypto::Verifier.from_file "wideword.net.cert"
+    assert trust.verify(wideword)
+    
+    cert=EzCrypto::Verifier.from_file "testsigner.cert"
+    assert !trust.verify(cert)
+    trust.add cert
+    assert trust.verify(cert)
   end
   
   def assert_signer(signer)
