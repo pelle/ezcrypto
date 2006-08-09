@@ -43,6 +43,10 @@ class EzCryptoTest < Test::Unit::TestCase
     signer=EzCrypto::Signer.from_file File.dirname(__FILE__) + "/testsigner.pem"
     verifier=EzCrypto::Verifier.from_file File.dirname(__FILE__) + "/testpub.pem"
     assert verifier
+    sig=signer.sign "test this rsa"
+    assert sig
+    assert verifier.verify( sig,"test this rsa")
+
     assert !verifier.cert?
     assert_equal signer.public_key.to_s, verifier.public_key.to_s
   end
@@ -50,8 +54,15 @@ class EzCryptoTest < Test::Unit::TestCase
   def test_dsa_public_key_read
     signer=EzCrypto::Signer.from_file File.dirname(__FILE__) + "/dsakey.pem"
     verifier=EzCrypto::Verifier.from_file File.dirname(__FILE__) + "/dsapubkey.pem"
+    
     assert verifier
+    sig=signer.sign "test this dsa"
+    assert sig
+    assert verifier.verify( sig,"test this dsa")
+
     assert !verifier.cert?
+    
+    # This fails as it seems like it returns an incorrect public key
     assert_equal signer.public_key.to_s, verifier.public_key.to_s
   end
   

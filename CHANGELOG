@@ -2,6 +2,8 @@
 
 Finally I have had a good reason http://www.tractis.com to add Digital Signature support to EzCrypto. We have support for RSA and DSA private and public keys as well as basic X509 certificate support. All in typical EzCrypto simple Ruby like methods.
 
+KNOWN PROBLEM. The DSA Signer.public_key method has some sort of problem but will be fixed for 0.6.1.
+
 0.5   July 19th, 2006 Good citizen release
 
 I have cleaned up the ActiveCrypto namespaces. It now does not use ActiveRecord::Crypto, but ActiveCrypto::*, if you have called stuff directly please update your code. 
