@@ -12,16 +12,30 @@ class EzCryptoTest < Test::Unit::TestCase
 
   def _test_generate_key #very slow so not run by default
     signer=EzCrypto::Signer.generate
+    assert signer.rsa?
+    assert !signer.dsa?
+    
     assert_signer(signer)
   end
   
   def test_from_file
     signer=EzCrypto::Signer.from_file "testsigner.pem"
+    assert signer.rsa?
+    assert !signer.dsa?
+    assert_signer(signer)
+  end
+
+  def test_dsa_from_file
+    signer=EzCrypto::Signer.from_file "dsakey.pem"
+    assert signer.dsa?
+    assert !signer.rsa?
     assert_signer(signer)
   end
 
   def test_from_password_protected_file
     signer=EzCrypto::Signer.from_file "protectedsigner.pem","secret"
+    assert signer.rsa?
+    assert !signer.dsa?
     assert_signer(signer)
   end
   

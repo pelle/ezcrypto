@@ -12,7 +12,11 @@ module EzCrypto
     end
   
     def self.decode(encoded,password=nil)
-      EzCrypto::Signer.new(OpenSSL::PKey::RSA.new( encoded,password))      
+      begin
+        EzCrypto::Signer.new(OpenSSL::PKey::RSA.new( encoded,password))
+      rescue
+        EzCrypto::Signer.new(OpenSSL::PKey::DSA.new( encoded,password))
+      end
     end
   
     def self.from_file(filename,password=nil)
@@ -29,13 +33,25 @@ module EzCrypto
     end
   
     def private_key
-      @priv.private_key    
+      @priv
     end
   
     def sign(data)
-      @priv.sign(OpenSSL::Digest::SHA1.new,data)
+      if rsa?
+        @priv.sign(OpenSSL::Digest::SHA1.new,data)
+      elsif dsa?
+        @priv.sign(OpenSSL::Digest::DSS1.new,data)
+      end
     end
   
+    def rsa?
+      @priv.is_a? OpenSSL::PKey::RSA
+    end
+    
+    def dsa?
+      @priv.is_a? OpenSSL::PKey::DSA
+    end
+
   end
 
   class Verifier
@@ -46,12 +62,10 @@ module EzCrypto
   
     def self.decode(encoded)
       case encoded
-      when /-----BEGIN PUBLIC KEY-----/
-        EzCrypto::Verifier.new(OpenSSL::PKey::RSA.new( encoded))
       when /-----BEGIN CERTIFICATE-----/
         EzCrypto::Certificate.new(OpenSSL::X509::Certificate.new( encoded))
       else
-        raise "Unknown public key format"
+        EzCrypto::Verifier.new(OpenSSL::PKey::RSA.new( encoded))
       end
     end
   
@@ -67,9 +81,25 @@ module EzCrypto
     def public_key
       @pub
     end
+    
+    def digest
+      Digest::SHA1.hexdigest(@pub.to_der)
+    end
+
+    def rsa?
+      @pub.is_a? OpenSSL::PKey::RSA
+    end
+    
+    def dsa?
+      @pub.is_a? OpenSSL::PKey::DSA
+    end
   
     def verify(sig,data)
-      @pub.verify( OpenSSL::Digest::SHA1.new, sig, data )
+      if rsa?
+        @pub.verify( OpenSSL::Digest::SHA1.new, sig, data )
+      elsif dsa?
+        @pub.verify( OpenSSL::Digest::DSS1.new, sig, data )
+      end
     end
   end
   
@@ -82,6 +112,10 @@ module EzCrypto
     
     def cert?
       true
+    end
+    
+    def cert_digest
+      Digest::SHA1.hexdigest(@cert.to_der)
     end
     
     def subject
@@ -122,6 +156,9 @@ module EzCrypto
       @extensions
     end
     
+    def method_missing(method)
+      subject.send method
+    end
     
   end
   
