@@ -19,37 +19,45 @@ class EzCryptoTest < Test::Unit::TestCase
   end
   
   def test_from_file
-    signer=EzCrypto::Signer.from_file "testsigner.pem"
+    signer=EzCrypto::Signer.from_file File.dirname(__FILE__) + "/testsigner.pem"
     assert signer.rsa?
     assert !signer.dsa?
     assert_signer(signer)
   end
 
   def test_dsa_from_file
-    signer=EzCrypto::Signer.from_file "dsakey.pem"
+    signer=EzCrypto::Signer.from_file File.dirname(__FILE__) + "/dsakey.pem"
     assert signer.dsa?
     assert !signer.rsa?
     assert_signer(signer)
   end
 
   def test_from_password_protected_file
-    signer=EzCrypto::Signer.from_file "protectedsigner.pem","secret"
+    signer=EzCrypto::Signer.from_file File.dirname(__FILE__) + "/protectedsigner.pem","secret"
     assert signer.rsa?
     assert !signer.dsa?
     assert_signer(signer)
   end
   
   def test_public_key_read
-    signer=EzCrypto::Signer.from_file "testsigner.pem"
-    verifier=EzCrypto::Verifier.from_file "testpub.pem"
+    signer=EzCrypto::Signer.from_file File.dirname(__FILE__) + "/testsigner.pem"
+    verifier=EzCrypto::Verifier.from_file File.dirname(__FILE__) + "/testpub.pem"
+    assert verifier
+    assert !verifier.cert?
+    assert_equal signer.public_key.to_s, verifier.public_key.to_s
+  end
+  
+  def test_dsa_public_key_read
+    signer=EzCrypto::Signer.from_file File.dirname(__FILE__) + "/dsakey.pem"
+    verifier=EzCrypto::Verifier.from_file File.dirname(__FILE__) + "/dsapubkey.pem"
     assert verifier
     assert !verifier.cert?
     assert_equal signer.public_key.to_s, verifier.public_key.to_s
   end
   
   def test_certificate_reader
-    signer=EzCrypto::Signer.from_file "testsigner.pem"
-    cert=EzCrypto::Verifier.from_file "testsigner.cert"
+    signer=EzCrypto::Signer.from_file File.dirname(__FILE__) + "/testsigner.pem"
+    cert=EzCrypto::Verifier.from_file File.dirname(__FILE__) + "/testsigner.cert"
     assert cert
     assert cert.cert?
     assert_instance_of EzCrypto::Certificate, cert
@@ -170,16 +178,16 @@ class EzCryptoTest < Test::Unit::TestCase
   
   def test_in_memory_store
     trust=EzCrypto::TrustStore.new
-    cert=EzCrypto::Verifier.from_file "testsigner.cert"
+    cert=EzCrypto::Verifier.from_file File.dirname(__FILE__) + "/testsigner.cert"
     assert !trust.verify(cert)
     trust.add cert
     assert trust.verify(cert)
     
-    valicert=EzCrypto::Verifier.from_file "valicert_class2_root.crt"
+    valicert=EzCrypto::Verifier.from_file File.dirname(__FILE__) + "/valicert_class2_root.crt"
     assert !trust.verify(valicert)
-    starfield=EzCrypto::Verifier.from_file "sf_issuing.crt"
+    starfield=EzCrypto::Verifier.from_file File.dirname(__FILE__) + "/sf_issuing.crt"
     assert !trust.verify(starfield)
-    wideword=EzCrypto::Verifier.from_file "wideword.net.cert"
+    wideword=EzCrypto::Verifier.from_file File.dirname(__FILE__) + "/wideword.net.cert"
     assert !trust.verify(wideword)
     
     trust.add valicert
@@ -192,15 +200,15 @@ class EzCryptoTest < Test::Unit::TestCase
   end
   
   def test_disk_store
-    trust=EzCrypto::TrustStore.new "store"
-    valicert=EzCrypto::Verifier.from_file "valicert_class2_root.crt"
+    trust=EzCrypto::TrustStore.new File.dirname(__FILE__) + "/store"
+    valicert=EzCrypto::Verifier.from_file File.dirname(__FILE__) + "/valicert_class2_root.crt"
     assert trust.verify(valicert)
-    starfield=EzCrypto::Verifier.from_file "sf_issuing.crt"
+    starfield=EzCrypto::Verifier.from_file File.dirname(__FILE__) + "/sf_issuing.crt"
     assert trust.verify(starfield)
-    wideword=EzCrypto::Verifier.from_file "wideword.net.cert"
+    wideword=EzCrypto::Verifier.from_file File.dirname(__FILE__) + "/wideword.net.cert"
     assert trust.verify(wideword)
     
-    cert=EzCrypto::Verifier.from_file "testsigner.cert"
+    cert=EzCrypto::Verifier.from_file File.dirname(__FILE__) + "/testsigner.cert"
     assert !trust.verify(cert)
     trust.add cert
     assert trust.verify(cert)

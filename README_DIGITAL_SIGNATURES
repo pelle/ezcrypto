@@ -1,0 +1,39 @@
+= EzSig - Easy to use Digital Signatures for Ruby
+
+EzSig is based on OpenSSL and allows you to do create and verify digital signatures in Ruby without learning too much crypto goobledegook.
+
+== Features
+
+* Simple Signer class
+* Simple Verifier class
+* Certificate sub class of Verifier which lets you read the certificate data in clear ruby.
+
+== Installation
+
+Download it from here:
+
+http://rubyforge.org/frs/?group_id=755
+
+or install it via Ruby Gems:
+
+	gem install ezruby
+
+
+== Simple examples
+
+==== Load Private key and sign
+
+	signer=EzCrypto::Signer.from_file "testsigner.pem"
+	sig=signer.sign "hello"
+
+==== Load Certificate and verify
+
+	cert=EzCrypto::Verifier.from_file "testsigner.cert"
+	cert.verify( sig,"hello")
+
+==== Query Certificate for information
+	
+	assert_equal cert.email,"pelleb@gmail.com"
+	assert_equal cert.country,"DK"
+	assert_equal cert.state,"Denmark"
+	assert_equal cert.locality,"Copenhagen"
