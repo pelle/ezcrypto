@@ -1,3 +1,13 @@
+0.6.2 August 15th, 2006 Trust something release
+
+Now comes complete with a fairly trusted list of root certs as extracted from Apple's keystore. With the addition of CACerts and GoDaddy SSL Certs (Buy from http://widecert.net). If you feel any important ones are missing let me know.
+
+You can create a trust store from this with TrustStore.default_trusted. Note many of these CA's are useless and you shouldn't really trust them, but this makes it easy to emulate the browsers support.
+
+0.6.1 August 14th, 2006 Subject!=Issuer bug fix
+
+I discovered a not so little bug in the certificate handling. The issuer method of the Certificate mistakenly returned the subject.
+
 0.6   August 10th, 2006 Certified PKI release
 
 Finally I have had a good reason http://www.tractis.com to add Digital Signature support to EzCrypto. We have support for RSA and DSA private and public keys as well as basic X509 certificate support. All in typical EzCrypto simple Ruby like methods.

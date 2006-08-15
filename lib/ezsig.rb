@@ -134,15 +134,19 @@ module EzCrypto
   Decodes a PEM encoded Certificate or Public Key and returns a Verifier object.
 =end  
     def self.decode(encoded)
-      case encoded
-      when /-----BEGIN CERTIFICATE-----/
-        EzCrypto::Certificate.new(OpenSSL::X509::Certificate.new( encoded))
-      else
-        begin
-          EzCrypto::Verifier.new(OpenSSL::PKey::RSA.new( encoded))
-        rescue
-          EzCrypto::Verifier.new(OpenSSL::PKey::DSA.new( encoded))
+      begin
+        case encoded
+        when /-----BEGIN CERTIFICATE-----/
+          EzCrypto::Certificate.new(OpenSSL::X509::Certificate.new( encoded))
+        else
+          begin
+            EzCrypto::Verifier.new(OpenSSL::PKey::RSA.new( encoded))
+          rescue
+            EzCrypto::Verifier.new(OpenSSL::PKey::DSA.new( encoded))
+          end
         end
+      rescue
+        puts encoded
       end
     end
   
@@ -152,6 +156,25 @@ module EzCrypto
     def self.from_file(filename)
       file = File.read( filename )
       decode(file)
+    end
+
+=begin rdoc
+  Decodes all certificates or public keys in a file and returns an array.
+=end
+    def self.load_all_from_file(filename)
+      file = File.read( filename )
+      certs=[]
+      count=0
+      file.split( %q{-----BEGIN}).each do |pem|
+        if pem and pem!=""
+            pem="-----BEGIN#{pem}\n"
+              cert=decode(pem)
+              if cert.is_a? EzCrypto::Verifier
+                certs<<cert
+              end
+        end
+      end
+      certs
     end
 
 =begin rdoc
@@ -242,7 +265,7 @@ module EzCrypto
   Returns a Name object containt the issuer of the certificate. 
 =end        
     def issuer
-      @issuer=EzCrypto::Name.new(@cert.subject) unless @issuer
+      @issuer=EzCrypto::Name.new(@cert.issuer) unless @issuer
       @issuer
     end
     
@@ -409,6 +432,17 @@ module EzCrypto
   NOTE: Currently this does not support CRL's or OCSP. We may add support for this later.
 =end  
   class TrustStore
+    
+=begin rdoc
+  Create a trust store of normally trusted root certificates as found in a browser. Extracted from Safari.
+=end
+    def self.default_trusted
+      store=TrustStore.new
+      EzCrypto::Verifier.load_all_from_file(File.dirname(__FILE__) + "/trusted.pem").each do |cert|
+        store.add cert
+      end
+      store
+    end
 =begin rdoc
   Create trust store with an optional list of paths of openssl trust stores.
 =end
