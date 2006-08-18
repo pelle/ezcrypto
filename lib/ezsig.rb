@@ -437,8 +437,15 @@ module EzCrypto
   Create a trust store of normally trusted root certificates as found in a browser. Extracted from Safari.
 =end
     def self.default_trusted
+      load_from_file(File.dirname(__FILE__) + "/trusted.pem")
+    end
+=begin rdoc
+  Create a trust store from a list of certificates in a pem file.
+  These certificates should just be listed one after each other.
+=end    
+    def self.load_from_file(file)
       store=TrustStore.new
-      EzCrypto::Verifier.load_all_from_file(File.dirname(__FILE__) + "/trusted.pem").each do |cert|
+      EzCrypto::Verifier.load_all_from_file(file).each do |cert|
         store.add cert
       end
       store
