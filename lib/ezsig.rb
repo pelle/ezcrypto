@@ -134,19 +134,15 @@ module EzCrypto
   Decodes a PEM encoded Certificate or Public Key and returns a Verifier object.
 =end  
     def self.decode(encoded)
-      begin
-        case encoded
-        when /-----BEGIN CERTIFICATE-----/
-          EzCrypto::Certificate.new(OpenSSL::X509::Certificate.new( encoded))
-        else
-          begin
-            EzCrypto::Verifier.new(OpenSSL::PKey::RSA.new( encoded))
-          rescue
-            EzCrypto::Verifier.new(OpenSSL::PKey::DSA.new( encoded))
-          end
+      case encoded
+      when /-----BEGIN CERTIFICATE-----/
+        EzCrypto::Certificate.new(OpenSSL::X509::Certificate.new( encoded))
+      else
+        begin
+          EzCrypto::Verifier.new(OpenSSL::PKey::RSA.new( encoded))
+        rescue
+          EzCrypto::Verifier.new(OpenSSL::PKey::DSA.new( encoded))
         end
-      rescue
-        puts encoded
       end
     end
   
@@ -465,7 +461,7 @@ module EzCrypto
     def add(obj)
       if obj.kind_of?(EzCrypto::Certificate)
         @store.add_cert obj.cert
-      elsif obj.kind_of?(OpenSSL::X509::Cert)
+      elsif obj.kind_of?(OpenSSL::X509::Certificate)
         @store.add_cert obj
       else 
         raise "unsupported object type"
@@ -477,7 +473,7 @@ module EzCrypto
     def verify(cert)
       if cert.kind_of?(EzCrypto::Certificate)
         @store.verify cert.cert
-      elsif cert.kind_of?(OpenSSL::X509::Cert)
+      elsif cert.kind_of?(OpenSSL::X509::Certificate)
         @store.verify cert
       else 
         false
