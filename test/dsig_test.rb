@@ -249,6 +249,28 @@ class EzCryptoTest < Test::Unit::TestCase
     assert trust.verify(cert)  
   end
   
+  def test_public_key_load_from_pkyp
+    verifier=EzCrypto::Verifier.from_pkyp "e93e18114cbefaaa89fda908b09df63d3662879a"
+    wideword=EzCrypto::Verifier.from_file File.dirname(__FILE__) + "/wideword.net.cert"
+    assert_equal wideword.cert.to_s,verifier.cert.to_s
+    assert verifier
+  end
+
+  def test_register_public_key_at_pkyp
+    pub=EzCrypto::Verifier.from_file File.dirname(__FILE__) + "/wideword.net.cert"
+    assert_equal pub.digest,pub.register_with_pkyp
+  end
+  
+  def test_create_register_and_fetch_public_key
+    signer=EzCrypto::Signer.generate
+    assert_equal signer.verifier.digest,signer.verifier.register_with_pkyp
+    verifier=EzCrypto::Verifier.from_pkyp signer.verifier.digest
+    sig=signer.sign "hello"
+    assert sig
+    assert verifier.verify( sig,"hello")    
+  end
+  
+  
   def assert_signer(signer)
     assert signer
     assert signer.public_key

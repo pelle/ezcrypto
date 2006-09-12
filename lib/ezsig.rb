@@ -1,4 +1,5 @@
 require 'ezcrypto'
+require 'net/http'
 =begin rdoc
 
 These modules provides a simple ruby like way to create and verify digital signatures.
@@ -155,6 +156,26 @@ module EzCrypto
     end
 
 =begin rdoc
+  Load a certificate or public key from PKYP based on it's hex digest
+=end  
+    def self.from_pkyp(digest)
+      digest=digest.strip.downcase
+      if digest=~/[0123456789abcdef]{40}/
+#        Net::HTTP.start("localhost", 9000) do |query|
+        Net::HTTP.start("pkyp.org", 80) do |query|
+          response=query.get "/#{digest}.pem"
+          if response.code=="200"
+            decode(response.body)
+          else
+            raise "Error occured (#{response.code}): #{response.body}"      
+          end
+        end
+      else
+        raise "Invalid digest"
+      end
+    end
+
+=begin rdoc
   Decodes all certificates or public keys in a file and returns an array.
 =end
     def self.load_all_from_file(filename)
@@ -219,6 +240,30 @@ module EzCrypto
         false
       end
     end
+
+=begin rdoc
+  Register the public key or certificate at PKYP
+=end
+    def register_with_pkyp
+      send_to_pkyp(@pub.to_s)
+    end
+    
+    protected
+    
+    def send_to_pkyp(pem)
+#      Net::HTTP.start("localhost", 9000) do |query|
+      Net::HTTP.start("pkyp.org", 80) do |query|
+        output=URI.escape(pem).gsub("+","%2b")
+        response=query.post "/register","body="+output
+        if response.code=="302"
+          response["Location"]=~/([0123456789abcdef]{40}$)/
+          $1
+        else
+          raise "Error occured (#{response.code}): #{response.body}"      
+        end
+      end
+    end
+
   end
 
 =begin rdoc
@@ -240,6 +285,13 @@ module EzCrypto
 =end    
     def cert?
       true
+    end
+
+=begin rdoc
+  Register the certificate at PKYP
+=end
+    def register_with_pkyp
+      send_to_pkyp(@cert.to_s)
     end
 
 =begin rdoc
