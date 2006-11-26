@@ -563,7 +563,14 @@ Warning! The interface may change.
 =end
     def self.generate_key64(size=32)
         key=OpenSSL::Random.random_bytes(size)
-        digest(key,size)
+        digest64(key,size)
+    end   
+=begin rdoc
+
+=end
+    def self.generate_hexkey(size=40)
+        key=OpenSSL::Random.random_bytes(size)
+        hexdigest(key,size)
     end   
     
 =begin rdoc
@@ -578,12 +585,25 @@ Warning! The interface may change.
         Digest::SHA256.digest(data)[0..(size-1)]
       end
     end
+
+=begin rdoc
+
+=end
+    def self.hexdigest(data,size=40)
+      if size==0
+        ""
+      elsif size<=40
+        Digest::SHA1.hexdigest(data)[0..(size-1)]
+      else
+        Digest::SHA256.hexdigest(data)[0..(size-1)]
+      end
+    end
     
 =begin rdoc
   
 =end
-    def self.digest64(data)
-      Base64.encode64(digest(data))
+    def self.digest64(data,size=16)
+      Base64.encode64(digest(data,size))
     end
 	end
 
