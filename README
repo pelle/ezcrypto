@@ -17,7 +17,7 @@ http://rubyforge.org/frs/?group_id=755
 
 or install it via Ruby Gems:
 
-	gem install ezruby
+	gem install ezcrypto
 
 == Simple examples
 
