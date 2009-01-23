@@ -38,12 +38,14 @@ Turn encryption on for this record. List all encrypted attributes
   class Document < ActiveRecord::Base
 		encrypt :title,:body
 	end
-	
-Include optional option :key, to specify an external KeyHolder, which holds the key used for encrypting and decrypting:
+
+Options are:
+  <tt>key</tt> - to specify an external KeyHolder, which holds the key used for encrypting and decrypting
+  <tt>base64</tt> - set to true in order to base64 encode the encrypted attributes.  defaults to false
 
   class Document < ActiveRecord::Base
   	belongs_to :user
-  	encrypt :title,:body,:key=>:user
+  	encrypt :title,:body,:key=>:user, :base64 => true
   end
 	
 =end
@@ -61,7 +63,15 @@ Include optional option :key, to specify an external KeyHolder, which holds the 
   					@@external_key=true
   				end;
         end
-  			self.encrypted_attributes=attributes
+
+        base64_encode = (options and options[:base64])
+        module_eval <<-"end;"
+          def self.ezcrypto_base64?
+            #{base64_encode.to_s}
+          end
+        end;
+        
+        self.encrypted_attributes=attributes
       end   
 		
 =begin rdoc
@@ -236,7 +246,7 @@ Returns the session_key
           raise MissingKeyError
         else
           if data
-            session_key.decrypt(data)
+            self.class.ezcrypto_base64? ? session_key.decrypt64(data) : session_key.decrypt(data)
           else
             nil
           end
@@ -248,7 +258,7 @@ Returns the session_key
           raise MissingKeyError
         else 
           if data
-            session_key.encrypt(data)
+            self.class.ezcrypto_base64? ? session_key.encrypt64(data) : session_key.encrypt(data)
           else
             nil
           end
