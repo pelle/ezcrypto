@@ -8,7 +8,7 @@ require 'rake/contrib/rubyforgepublisher'
 
 PKG_BUILD     = ENV['PKG_BUILD'] ? '.' + ENV['PKG_BUILD'] : ''
 PKG_NAME      = 'ezcrypto'
-PKG_VERSION   = '0.7.1' + PKG_BUILD
+PKG_VERSION   = '0.7.2' + PKG_BUILD
 PKG_FILE_NAME = "#{PKG_NAME}-#{PKG_VERSION}"
 
 RELEASE_NAME  = "REL #{PKG_VERSION}"
@@ -33,7 +33,7 @@ Rake::RDocTask.new { |rdoc|
   rdoc.title    = "EzCrypto - Simplified Crypto Library"
 #  rdoc.options << '--line-numbers --inline-source --main README #--template=jamis'
   rdoc.template = "#{ENV['template']}.rb" if ENV['template']
-  rdoc.rdoc_files.include('README')
+  rdoc.rdoc_files.include('README.rdoc')
   rdoc.rdoc_files.include('README_ACTIVE_CRYPTO')
   rdoc.rdoc_files.include('README_DIGITAL_SIGNATURES')
   rdoc.rdoc_files.include('CHANGELOG')
@@ -50,7 +50,7 @@ spec = Gem::Specification.new do |s|
   s.version = PKG_VERSION
 
   s.author = "Pelle Braendgaard"
-  s.email = "pelle@stakeitout.com"
+  s.email = "pelle@stakeventures.com"
   s.rubyforge_project = "ezcrypto"
   s.homepage = "http://ezcrypto.rubyforge.org"
 
@@ -59,7 +59,7 @@ spec = Gem::Specification.new do |s|
   s.requirements << 'none'
   s.require_path = 'lib'
 
-  s.files = [ "rakefile", "README", "README_ACTIVE_CRYPTO", "MIT-LICENSE","CHANGELOG","init.rb" ]
+  s.files = [ "rakefile", "README.rdoc", "README_ACTIVE_CRYPTO", "README_DIGITAL_SIGNATURES", "MIT-LICENSE","CHANGELOG","init.rb" ]
   ["lib","test"].each do |dir|
   		s.files = s.files + Dir.glob( "#{dir}/*" )
   end

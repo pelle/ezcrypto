@@ -128,17 +128,17 @@ EzCrypto and ActionCrypto is released under the MIT license.
 
 == Support
 
-To contact the author, send mail to pelleb@gmail.com
+To contact the author, send mail to pelle@stakeventures.com
 
 Also see my blogs at:
 http://stakeventures.com and
-http://neubia.com
+http://blog.extraeagle.com
 
-This project was based on code used in my projects StakeItOut, WideWord and WideBlog.
+This project was based on code used in my projects Agree2, WideWord and WideBlog.
 
-StakeItOut lets you securely share web services with your partners.
+Agree2 lets you create legal business agreements instantly.
 
-https://stakeitout.com
+https://agree2.com
 
 WideWord lets you collaboratively write and share documents that remain 100% encrypted on the server. Only you have the keys:
 
@@ -149,4 +149,4 @@ WideBlog is a secure private blogging system designed for private project blogs.
 http://wideblog.net
 
 
-(C) 2005 Pelle Braendgaard
+(C) 2005-2009 Pelle Braendgaard
