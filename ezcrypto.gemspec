@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
                 "test/ezcrypto_test.rb",
                 "test/key_holder_test.rb",
                 "test/protectedsigner.pem",
-                "test/sf_issuing.crt",
+                "test/sf_intermediate.crt",
                 "test/store",
                 "test/test_helper.rb",
                 "test/testchild.pem",
@@ -39,7 +39,7 @@ Gem::Specification.new do |s|
                 "test/testsigner.cert",
                 "test/testsigner.pem",
                 "test/valicert_class2_root.crt",
-                "test/wideword.net.cert"]
+                "test/agree2.com.cert"]
   s.extra_rdoc_files = ["CHANGELOG", "README.rdoc","README_ACTIVE_CRYPTO","README_DIGITAL_SIGNATURES"]
   s.test_files = ["test/active_crypto_test.rb",
                   "test/association_key_holder_test.rb",
@@ -52,7 +52,7 @@ Gem::Specification.new do |s|
                   "test/ezcrypto_test.rb",
                   "test/key_holder_test.rb",
                   "test/protectedsigner.pem",
-                  "test/sf_issuing.crt",
+                  "test/sf_intermediate.crt",
                   "test/store",
                   "test/test_helper.rb",
                   "test/testchild.pem",
@@ -61,7 +61,7 @@ Gem::Specification.new do |s|
                   "test/testsigner.cert",
                   "test/testsigner.pem",
                   "test/valicert_class2_root.crt",
-                  "test/wideword.net.cert"]
+                  "test/agree2.com.cert"]
   
 end
 

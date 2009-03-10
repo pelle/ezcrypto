@@ -351,7 +351,7 @@ module EzCrypto
   revoked.
 =end    
     def valid?(time=Time.now.utc)
-      time.to_i>self.not_before.to_i && time.to_i<self.not_after.to_i
+      time>not_before && time<self.not_after
     end
 
 =begin rdoc

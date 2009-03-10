@@ -23,7 +23,6 @@ require 'initializer'
 
 Rails::Initializer.run(:set_load_path)
 
-config = YAML::load(IO.read(File.dirname(__FILE__) + '/database.yml'))
 ActiveRecord::Base.logger = Logger.new(File.dirname(__FILE__) + "/debug.log")
 ActiveRecord::Base.establish_connection(
     :adapter  => "mysql",

@@ -2,7 +2,7 @@ require 'association_key_holder_test'
 
 class EncUser < ActiveRecord::Base
   set_table_name "users"
-  encrypt :name
+  encrypt :name, :base64=>true
 end
 
 class RawUser < ActiveRecord::Base
@@ -12,6 +12,10 @@ end
 class EncryptTest < AssociationKeyHolderTest
   def setup
     @key_holder=EncUser.create 
+  end
+  
+  def test_should_be_base64
+    assert EncUser.ezcrypto_base64?
   end
   
   def test_should_retain_session_key_on_reload

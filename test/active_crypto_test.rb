@@ -11,18 +11,18 @@ class User < ActiveRecord::Base
 end
 
 class Secret < ActiveRecord::Base
-	encrypt :name,:email, :key=>:user
+	encrypt :name,:email, :key=>:user, :base64=>true
 	belongs_to :user
 	has_many :children
 end
 
 class Child < ActiveRecord::Base
-	encrypt :email, :key=>:secret
+	encrypt :email, :key=>:secret, :base64=>true
 	belongs_to :secret
 end
 
 class Asset<ActiveRecord::Base
-  encrypt :title
+  encrypt :title, :base64=>true
   has_many :caps,:dependent=>:destroy
   
   def self.create(title,email)
@@ -48,7 +48,7 @@ end
 
 class Cap < ActiveRecord::Base
   belongs_to :asset
-  encrypt :shared_key
+  encrypt :shared_key, :base64=>true
   
   def self.find_by_key(cap_key)
     cap_key.chop
@@ -87,13 +87,13 @@ class Group < ActiveRecord::Base
 	belongs_to :user
 	has_many :group_secrets
 	
-	encrypt :name,:group_key, :key=>:user	
+	encrypt :name,:group_key, :key=>:user	, :base64=>true
 end
 
 class GroupSecret < ActiveRecord::Base
 	belongs_to :group
 	
-	encrypt :title,:body, :key=>:group
+	encrypt :title,:body, :key=>:group, :base64=>true
 	
 end
 
