@@ -63,6 +63,8 @@ spec = Gem::Specification.new do |s|
   ["lib","test"].each do |dir|
   		s.files = s.files + Dir.glob( "#{dir}/*" )
   end
+  s.extra_rdoc_files = ["CHANGELOG", "README.rdoc","README_ACTIVE_CRYPTO","README_DIGITAL_SIGNATURES"]
+  s.test_files = Dir.glob("test/*")
 end
   
 Rake::GemPackageTask.new(spec) do |p|
