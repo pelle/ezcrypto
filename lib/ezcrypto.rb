@@ -364,9 +364,12 @@ Helper method, yields the current cipher to a block.
 
 
 =begin rdoc
-Encrypt a file 'inplace' and add a suffix
-see #cipher_file.
+Encrypt a file 'inplace' and add a suffix.
 IMPORTANT: The inputfile will be deleted by default.
+
+Options:
+* suffix: string added to src if tgt is not provided. Default: '.ez'
+* autoclean: remove the source file if true. Default: 'true'
 =end
     def encrypt_file(src, tgt=nil, options = {} )
       options = { :suffix => '.ez', :autoclean => 'true' }.update(options)
@@ -377,8 +380,11 @@ IMPORTANT: The inputfile will be deleted by default.
 
 =begin rdoc
 Decrypt a file 'inplace' and remove a suffix
-see #cipher_file
 IMPORTANT: The inputfile will be deleted by default.
+
+Options:
+* suffix: string removed from src if tgt is not provided. Default: '.ez'
+* autoclean: remove the source file if true. Default: 'true'
 =end
     def decrypt_file(src, tgt=nil, options = {} )
       options = { :suffix => '.ez', :autoclean => 'true' }.update(options)
