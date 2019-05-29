@@ -6,7 +6,6 @@ require 'ezcrypto'
 require 'base64'
 
 class EzCryptoTest < Minitest::Test
-
   def test_generate_alg_key
     assert_generate_alg_key "aes-128-cbc",16
     assert_generate_alg_key "aes-192-cbc",24

@@ -5,8 +5,7 @@ require 'fileutils'
 require 'ezsig'
 require 'base64'
 
-class DigTest < Minitest::Test
-
+class DsigTest < Minitest::Test
   def _test_generate_key #very slow so not run by default
     signer=EzCrypto::Signer.generate
     assert signer.rsa?

@@ -6,10 +6,6 @@ require 'base64'
 require 'digest/sha1'
 
 class DigestTest < Minitest::Test
-
-  def setup
-  end
-
   def test_digest
     ["hello","","test"].each do |data|
       assert_equal Digest::SHA1.digest(data)[0..15],EzCrypto::Digester.digest(data)
