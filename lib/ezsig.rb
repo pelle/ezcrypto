@@ -181,7 +181,6 @@ module EzCrypto
     def self.load_all_from_file(filename)
       file = File.read( filename )
       certs=[]
-      count=0
       file.split( %q{-----BEGIN}).each do |pem|
         if pem and pem!=""
             pem="-----BEGIN#{pem}\n"

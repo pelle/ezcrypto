@@ -7,9 +7,6 @@ require 'base64'
 
 class EzCryptoTest < Minitest::Test
 
-  def setup
-  end
-
   def test_generate_alg_key
     assert_generate_alg_key "aes-128-cbc",16
     assert_generate_alg_key "aes-192-cbc",24
@@ -65,7 +62,7 @@ class EzCryptoTest < Minitest::Test
     
   def test_keyfile_store_load
 
-    algo, size = "aes-256-cbc", 32   
+    algo = "aes-256-cbc"
     keyfile = 'ezcrypto-test.key'
     
     FileUtils.rm [keyfile], :force => true
@@ -85,7 +82,7 @@ class EzCryptoTest < Minitest::Test
 
     clearfile = 'lorem_ipsum.txt'
     keyfile = 'lorem_ipsum.key'
-    algo, size = "aes-256-cbc", 32
+    algo = "aes-256-cbc"
     
     File.open(clearfile, 'w') { |f| f.write(CLEAR_TEXT) }
     assert_file_contains clearfile, CLEAR_TEXT    
@@ -111,7 +108,7 @@ class EzCryptoTest < Minitest::Test
   
     clearfile = 'lorem_ipsum.txt'
     keyfile = 'lorem_ipsum.key'
-    algo, size = "aes-256-cbc", 32    
+    algo = "aes-256-cbc"
 
     File.open(clearfile, 'w') { |f| f.write(CLEAR_TEXT) }
     assert_file_contains clearfile, CLEAR_TEXT
