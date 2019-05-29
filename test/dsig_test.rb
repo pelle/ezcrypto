@@ -1,14 +1,11 @@
 $:.unshift(File.dirname(__FILE__) + "/../lib/")
 
-require 'test/unit'
+require 'minitest'
 require 'fileutils'
 require 'ezsig'
 require 'base64'
 
-class EzCryptoTest < Test::Unit::TestCase
-
-  def setup
-  end
+class DigTest < Minitest::Test
 
   def _test_generate_key #very slow so not run by default
     signer=EzCrypto::Signer.generate

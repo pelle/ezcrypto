@@ -1,11 +1,11 @@
 $:.unshift(File.dirname(__FILE__) + "/../lib/")
 
-require 'test/unit'
+require 'minitest'
 require 'ezcrypto'
 require 'base64'
 require 'digest/sha1'
 
-class DigestTest < Test::Unit::TestCase
+class DigestTest < Minitest::Test
 
   def setup
   end
