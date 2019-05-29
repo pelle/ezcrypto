@@ -429,7 +429,7 @@ Warning! The interface may change.
   
 =end
     def initialize(key,target,mode,algorithm)
-      @cipher = OpenSSL::Cipher::Cipher.new(algorithm)  
+      @cipher = OpenSSL::Cipher.new(algorithm)
       if mode
         @cipher.encrypt
       else
