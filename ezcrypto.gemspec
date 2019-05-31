@@ -1,12 +1,19 @@
+# frozen_string_literal: true
+
+lib = File.expand_path('lib', __dir__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'ezcrypto/version'
+
 Gem::Specification.new do |s|
   s.name        = 'ezcrypto'
-  s.version     = '0.7.2'
-  s.date        = '2009-03-10'
+  s.version     = EzCrypto::VERSION
+  s.date        = '2019-05-31'
   s.summary     = 'EzCrypto - Simplified Crypto Library'
   s.email       = 'pelle@stakeventures.com'
   s.homepage    = 'http://ezcrypto.rubyforge.org'
   s.description = 'EzCrypto is an easy to use wrapper around the poorly documented OpenSSL ruby library.'
   s.authors     = ['Pelle Braendgaard', 'Micah Wedemeyer']
+  s.metadata['allowed_push_host'] = 'https://gemini.atl.appfolio.net'
   s.files = %w[
     rakefile
     README.rdoc
